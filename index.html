@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>FRV Quick Quiz</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #question, #answer {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+        #nav-buttons {
+            display: none;
+        }
+    </style>
+<style>
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+</style></head>
+<body>
+<h1>FRV Quick Quiz</h1>
+<h3>Questions generated from Recruit Manuals</h3>
+<div id="start-buttons">
+<button class="button" onclick="startQuiz(5)">Quick 5</button>
+<button class="button" onclick="startQuiz(10)">Quick 10</button>
+<button class="button" onclick="startQuiz(20)">Quick 20</button>
+</div>
+<div id="quiz-container" style="display:none;">
+<div id="question"></div>
+<div id="answer" style="display:none;"></div>
+<div id="nav-buttons">
+<button class="button" onclick="showAnswer()">Show Answer</button>
+<button class="button" onclick="prevQuestion()">Back</button>
+<button class="button" onclick="nextQuestion()">Next</button>
+</div>
+</div>
+<div id="end-screen" style="display:none;">
+<button class="button" onclick="location.reload()">Start Over</button>
+</div>
+<script>
+        const allQuestions = [
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "This is a sample question",
+    "answer": "This is a sample answer."
+  },
+  {
+    "question": "What is the difference between a 'RED RED RED' message and a MAYDAY message",
+    "answer": "RED RED RED - Used to clear Radio congestion. MAYDAY is used in a life threatening situation."
+  },
+  {
+    "question": "How many Liters is a BA cylinder?",
+    "answer": "2040L at 300 Bar."
+  },
+  {
+    "question": "How much Oxygen is in Air?",
+    "answer": "20.93% (21%)."
+  },
+  {
+    "question": "What is the electrical rating of the Fuse Puller?",
+    "answer": "123kv"
+  },
+  {
+    "question": "What is the No-Go Zone for (1) Power poles and (2) Towers?",
+    "answer": "8m in all directions for Towers and 3m for Poles."
+  },
+  {
+    "question": "What is classed as High and Low Voltage?",
+    "answer": "Low Voltage - Under 1000v. High Voltage - Over 1000v."
+  },
+  {
+    "question": "What is a Passive Fire Saftey System?",
+    "answer": "Passive systems \u2013 fire rated elements in a building. Ie building materials, fire rated doors."
+  },
+  {
+    "question": "What is an Active Fire Saftey System?",
+    "answer": "Active systems \u2013 mechanical or electrical system that will detect a fire and actively intervene to control or extinguish the fire. Ie alarm system, sprinkler system."
+  },
+  {
+    "question": "What are Signs of Impending Structural Collapse? (6)",
+    "answer": " 1.Falling of structural materials"
+  },
+  {
+    "question": "Give an example of a Class 10 Building",
+    "answer": "Class 10 -  a non habitable building or structure"
+  },
+  {
+    "question": "Give an example of a CLass 9 Building",
+    "answer": "Class 9 \u2013 a building of a public nature."
+  },
+  {
+    "question": "Give an example of a Class 6 Building",
+    "answer": "Class 6 \u2013 a shop or other building for the sale of goods by retail or the supply of services direct to the public. I.e \u2013 eating room, caf\u00e9, restaurant, hairdresser, market or sales room, service station."
+  },
+  {
+    "question": "Give an example of a Class 2 Building",
+    "answer": "Class 2 \u2013 building containing 2 or more sole occupancy units each been a separate dwelling."
+  },
+  {
+    "question": "Give an example of a Class 1A or 1B Building",
+    "answer": "1A \u2013 single dwelling"
+  },
+  {
+    "question": "What are the Low, Medium & High expansion rates of foam?",
+    "answer": "Low - 2:1 to 20:1. Medium - 20:1 to 200:1. High - 50:1 to 500:1."
+  },
+  {
+    "question": "What is the critical Application Rate of Foam?",
+    "answer": "6.5L/min/m2."
+  },
+  {
+    "question": "What are the 3 types of Water Supply Mains",
+    "answer": "Trunk - Up to 3m in diameter. Distribution - Upto 450mm. Service 75mm to 150mm Diameter."
+  },
+  {
+    "question": "Describe the 4 Geographical Sectors of a building",
+    "answer": "1 \u2013 front of building"
+  },
+  {
+    "question": "What are 3 types of extinguishment methods for a compartment fire",
+    "answer": "Direct attack, Indirect attack, Gas Cooling."
+  },
+  {
+    "question": "What does the acronym B-SAHF stand for?",
+    "answer": "Building, Smoke, Air, Heat, Flame."
+  },
+  {
+    "question": "What is the Rating on the Div A Pump",
+    "answer": "Darley 1000 mid-mounted centrifugal pump with additional 2nd stage high pressure attachment."
+  },
+  {
+    "question": "What 6 items are on a HZACHEM placard?",
+    "answer": "Substance, UN Number, HAZCHEM, Contacts, Class label, specialist advice."
+  },
+  {
+    "question": "What is a Class A Fire?",
+    "answer": "Class A: Carbonaceous material - wood, straw."
+  },
+  {
+    "question": "What is a Class B Fire?",
+    "answer": "Class B: Flammable liquids - petrol, butane."
+  },
+  {
+    "question": "What is a Class C Fire?",
+    "answer": "Class C: Flammable gases - LPG gas, methane."
+  },
+  {
+    "question": "What is a Class D Fire?",
+    "answer": "Class D: Combustible metals - Aluminium shavings, Magnesium"
+  },
+  {
+    "question": "What is a Class E Fire?",
+    "answer": "Class E: Electrical fires - No fuels."
+  },
+  {
+    "question": "What is a Class F Fire?",
+    "answer": "Class F: Fats and oils - Cooking oil, fat fire."
+  },
+  {
+    "question": "What are the 4 routes of entry for toxic substances, in order.",
+    "answer": "Absorption, inhalation, injections, ingestion."
+  },
+  {
+    "question": "What is the formula for calculating Head Preassure",
+    "answer": "Head Pressure = Height (In Meters) x 10kpa."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.1",
+    "answer": "Explosives \u2013 Gelatine Dynamite."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.2",
+    "answer": "Flammable Gases \u2013 LPG, Methane."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.3",
+    "answer": "Flammable Liquids \u2013 Petrol, Ethanol."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.4",
+    "answer": "Flammable Solids \u2013 Nitrocellulose, Sulphur."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.5",
+    "answer": "Oxidising Substances \u2013 Nitrates."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.6",
+    "answer": "Toxic and Infectious Substances \u2013 Cyanide, Medical Waste."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.7",
+    "answer": "Radioactive Substances \u2013 Plutonium."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.8",
+    "answer": "Corrosive Substances \u2013 Sulphuric Acid."
+  },
+  {
+    "question": "What is Dangerous Goods Classes No.9",
+    "answer": "Miscellaneous Dangerous Goods \u2013 Dry Ice."
+  },
+  {
+    "question": "Why should garments not be stored in direct sunlight?",
+    "answer": "UV light can degrade the outer shell of the garments."
+  },
+  {
+    "question": "List three times when PPC garments should be inspected.",
+    "answer": "When received new, after exposure to heat/chemicals, and after laundering or decontamination."
+  },
+  {
+    "question": "What are the 3 Horn Signals?",
+    "answer": "Evacuation: 3 blasts of 1 second, Cease Operations: 1 Blast of 3 Seconds, Resume Operations: 1 Blast of 3 seconds then 1 Blast of 1 second"
+  },
+  {
+    "question": "List four types of chemicals that can contaminate PPC.",
+    "answer": "Hydrogen cyanide, hydrochloric acid, hydrocarbons, polynuclear aromatic compounds."
+  },
+  {
+    "question": "What is the most dangerous time for exposure to contaminants on PPC?",
+    "answer": "Between removal of protective equipment and proper bagging/tagging."
+  },
+  {
+    "question": "Name two chronic health effects of exposure to fire contaminants.",
+    "answer": "Cancer and mesothelioma."
+  },
+  {
+    "question": "What is presumptive legislation in the context of firefighter health?",
+    "answer": "It presumes certain cancers are caused by firefighting, allowing for compensation claims."
+  },
+  {
+    "question": "List three cancers with elevated rates among firefighters.",
+    "answer": "Testicular cancer, brain cancer, non-Hodgkin\u2019s lymphoma."
+  },
+  {
+    "question": "What are three ways to minimise exposure to fire contaminants?",
+    "answer": "Wear BA throughout overhaul, use Decon wipes post-incident, and bag contaminated gear."
+  },
+  {
+    "question": "What is the Safe Person Approach?",
+    "answer": "A strategy combining organisational and individual responsibilities to manage risk."
+  },
+  {
+    "question": "What are the three levels of risk management?",
+    "answer": "Strategic, systematic, and dynamic."
+  },
+  {
+    "question": "What is the difference between Hazard and Risk, in the context of fireground safety.",
+    "answer": "A hazard is a potential source of harm; a risk is the likelihood and consequence of that harm."
+  },
+  {
+    "question": "What is the purpose of a dynamic risk assessment?",
+    "answer": "To continuously assess and control risks in a changing operational environment."
+  },
+  {
+    "question": "What is the principle of Risk versus Gain?",
+    "answer": "Firefighters should only take risks when there is potential to save lives or property."
+  },
+  {
+    "question": "List three early symptoms of heat stress.",
+    "answer": "Vigorous perspiration, muscular pain and spasms, and heat rash."
+  },
+  {
+    "question": "What are two types of heat exhaustion?",
+    "answer": "Water depletion and salt depletion."
+  },
+  {
+    "question": "What is the difference between heat exhaustion and heat stroke?",
+    "answer": "Heat exhaustion is caused by overexertion and dehydration, while heat stroke is a life-threatening condition where the body's cooling system fails."
+  },
+  {
+    "question": "What are three actions to take if someone is suffering from heat stroke?",
+    "answer": "Remove the person from the heat source, apply water and fan them, and call emergency services."
+  },
+  {
+    "question": "Why is dehydration dangerous during firefighting?",
+    "answer": "It impairs the body's cooling system, leading to heat-related illnesses and reduced performance."
+  },
+  {
+    "question": "What is the optimum work envelope?",
+    "answer": "The area between shoulder and mid-thigh height, directly in front of the body, and close to the body."
+  },
+  {
+    "question": "Name three risk factors for manual handling injuries.",
+    "answer": "Poor posture, repetitive tasks, and excessive force."
+  },
+  {
+    "question": "What is the hierarchy of controls?",
+    "answer": "Elimination, substitution, engineering controls, administrative controls, and PPE."
+  },
+  {
+    "question": "What are two causes of hearing loss?",
+    "answer": "Prolonged exposure to loud noise and certain medications."
+  },
+  {
+    "question": "What is the correct way to test the effectiveness of earplugs?",
+    "answer": "Cover your ears with your hands while wearing earplugs; there should be no significant difference in noise level."
+  },
+  {
+    "question": "What is occupational stress?",
+    "answer": "A reaction to pressures faced in the course of or in connection with one's occupation."
+  },
+  {
+    "question": "What is the MANERS model used for?",
+    "answer": "It is a psychological first aid model used to support individuals after traumatic events."
+  },
+  {
+    "question": "What is post-traumatic growth?",
+    "answer": "Positive psychological change experienced as a result of struggling with highly challenging life circumstances."
+  },
+  {
+    "question": "What is LPG and how is it stored?",
+    "answer": "Liquefied Petroleum Gas (LPG) is a flammable gas stored under pressure in liquid form, typically in cylinders or tanks."
+  },
+  {
+    "question": "What is a BLEVE?",
+    "answer": "A Boiling Liquid Expanding Vapour Explosion, which occurs when a vessel containing pressurised liquid ruptures due to heat."
+  },
+  {
+    "question": "What are the flammability limits of LPG?",
+    "answer": "Lower Explosive Limit (LEL) is 2%, and Upper Explosive Limit (UEL) is 10%."
+  },
+  {
+    "question": "What is the correct action if an LPG tank is on fire?",
+    "answer": "Do not extinguish the flame unless the leak can be stopped; cool the tank with water and stay away from the ends."
+  },
+  {
+    "question": "What is the correct action if an LPG leak is detected?",
+    "answer": "Eliminate ignition sources, evacuate the area, and isolate the supply if safe to do so."
+  },
+  {
+    "question": "What is the purpose of compartmentation in buildings?",
+    "answer": "To limit the spread of fire and smoke, allowing safe evacuation and reducing structural damage."
+  },
+  {
+    "question": "What is a notifiable incident under WorkSafe regulations?",
+    "answer": "An incident resulting in death, serious injury, or requiring hospital treatment within 48 hours of exposure."
+  },
+  {
+    "question": "What is the difference between night vision and thermal imaging?",
+    "answer": "Night vision amplifies visible light and requires some ambient light, while thermal imaging detects infrared radiation (heat) and works in total darkness."
+  },
+  {
+    "question": "What is the primary function of a fire detection and alarm system?",
+    "answer": "To alert occupants of a building to the presence of fire."
+  },
+  {
+    "question": "What are the three main types of fire detectors?",
+    "answer": "Heat, Smoke, and Flame detectors."
+  },
+  {
+    "question": "What are the two main types of point-type smoke detectors?",
+    "answer": "Ionisation and Photoelectric."
+  },
+  {
+    "question": "What type of smoke detector is more effective at detecting smouldering fires?",
+    "answer": "Photoelectric smoke detectors."
+  },
+  {
+    "question": "What is the main disadvantage of ionisation smoke detectors?",
+    "answer": "They are less sensitive to slow-burning, smouldering fires."
+  },
+  {
+    "question": "What does VESDA stand for?",
+    "answer": "Very Early Smoke Detection Apparatus."
+  },
+  {
+    "question": "What type of environment is VESDA typically used in?",
+    "answer": "Highly sensitive environments like museums, libraries, and hospitals."
+  },
+  {
+    "question": "What is the main advantage of heat detectors?",
+    "answer": "They are cost-effective in open places and require limited maintenance."
+  },
+  {
+    "question": "What is the disadvantage of heat detectors?",
+    "answer": "Fire must be well developed and generating heat to operate the detector."
+  },
+  {
+    "question": "What does ASE stand for in fire systems?",
+    "answer": "Alarm Signalling Equipment."
+  },
+  {
+    "question": "What is the purpose of an Emergency Warning and Intercommunication System (EWIS)?",
+    "answer": "To control evacuation in large or complex buildings."
+  },
+  {
+    "question": "What is the function of a manual call point?",
+    "answer": "To manually raise an alarm in case of fire or emergency."
+  },
+  {
+    "question": "What is the purpose of stairwell pressurisation?",
+    "answer": "To keep stairwells smoke-free for safe evacuation."
+  },
+  {
+    "question": "What is the function of automatic smoke vents?",
+    "answer": "To allow smoke and hot gases to escape from a building."
+  },
+  {
+    "question": "What is the difference between fire doors and smoke doors?",
+    "answer": "Fire doors can be smoke doors, but smoke doors cannot be fire doors."
+  },
+  {
+    "question": "What are the three main functions of a sprinkler system?",
+    "answer": "Detect fire, attack fire, and raise the alarm."
+  },
+  {
+    "question": "What are the acceptable water sources for sprinkler systems?",
+    "answer": "Town mains, gravity tanks, and internal storage tanks."
+  },
+  {
+    "question": "What is the most common type of sprinkler system?",
+    "answer": "Wet pipe sprinkler system."
+  },
+  {
+    "question": "What type of sprinkler system is used in high hazard locations?",
+    "answer": "Deluge system."
+  },
+  {
+    "question": "What are the two types of sprinkler heads?",
+    "answer": "Fusible solder type and sealed glass bulb type."
+  },
+  {
+    "question": "What color indicates a 68\u00b0C sprinkler head?",
+    "answer": "Red."
+  },
+  {
+    "question": "What is the function of a Valve Monitor Alarm (VMA)?",
+    "answer": "To detect tampering with water control valves."
+  },
+  {
+    "question": "What is the purpose of a jacking pump?",
+    "answer": "To maintain water pressure and reduce false alarms."
+  },
+  {
+    "question": "What is the function of a retard chamber?",
+    "answer": "To prevent false alarms from water pressure surges."
+  },
+  {
+    "question": "What triggers the alarm pressure switch?",
+    "answer": "A pressure drop due to sprinkler activation."
+  },
+  {
+    "question": "What is the purpose of isolating fire protection systems?",
+    "answer": "To manage faults or maintenance without compromising safety."
+  },
+  {
+    "question": "What is the minimum oxygen level required for safe breathing?",
+    "answer": "14%."
+  },
+  {
+    "question": "What does HOTS stand for in respiratory hazards?",
+    "answer": "High temperature, Oxygen deficiency, Toxic atmosphere, Smoke."
+  },
+  {
+    "question": "What is the working duration of a BA air cylinder?",
+    "answer": "24 minutes."
+  },
+  {
+    "question": "What is the first step in the buddy breathing procedure?",
+    "answer": "Send a Mayday radio message."
+  },
+  {
+    "question": "What is the emergency evacuation signal?",
+    "answer": "Three short blasts, repeated every 10 seconds."
+  },
+  {
+    "question": "What is the purpose of the Emergency Information Book?",
+    "answer": "To inform firefighters about dangerous goods on site."
+  },
+  {
+    "question": "What does the HAZCHEM code provide?",
+    "answer": "Immediate action advice for hazardous materials."
+  },
+  {
+    "question": "What is the flammable range of methane?",
+    "answer": "5.2% to 15%."
+  },
+  {
+    "question": "What is the flash point of petrol?",
+    "answer": "-43\u00b0C."
+  },
+  {
+    "question": "What is the pH range of strong acids?",
+    "answer": "Less than 2."
+  },
+  {
+    "question": "What is the pH range of strong alkalis?",
+    "answer": "Greater than 12."
+  },
+  {
+    "question": "What is the purpose of soda ash in spill response?",
+    "answer": "To neutralise acid spills."
+  },
+  {
+    "question": "What is the purpose of the warm zone in a hazmat incident?",
+    "answer": "To decontaminate personnel and equipment."
+  },
+  {
+    "question": "What is the purpose of the cold zone?",
+    "answer": "To provide a safe area for support and command functions."
+  },
+  {
+    "question": "What is the purpose of the buddy lights on a BA set?",
+    "answer": "To show pressure status and alarms to others."
+  },
+  {
+    "question": "What does the acronym ANZERG stand for?",
+    "answer": "Australia & New Zealand Emergency Response Guide."
+  },
+  {
+    "question": "What is the primary hazard of cryogenic liquids?",
+    "answer": "Extremely low temperatures that can cause cold burns and frostbite."
+  },
+  {
+    "question": "What is the most common route of entry for toxic substances?",
+    "answer": "Inhalation."
+  },
+  {
+    "question": "What is the flash point of a substance?",
+    "answer": "The lowest temperature at which it can vaporize to form an ignitable mixture in air."
+  },
+  {
+    "question": "What is the flammable range of hydrogen?",
+    "answer": "1.0% to 75%."
+  },
+  {
+    "question": "What is the pH range of neutral substances?",
+    "answer": "pH 7."
+  },
+  {
+    "question": "What is the purpose of a Bund in spill containment?",
+    "answer": "To prevent the spread of hazardous liquids."
+  },
+  {
+    "question": "What company is contracted for approved laundry services?",
+    "answer": "Alsco P/L."
+  },
+  {
+    "question": "What are common toxic chemicals produced by fire?",
+    "answer": "Hydrogen cyanide, hydrochloric acid, hydrocarbons, and heavy metals."
+  },
+  {
+    "question": "What are the four routes of entry for toxic substances?",
+    "answer": "Inhalation, ingestion, absorption, and injection."
+  },
+  {
+    "question": "What are the two types of health effects from contaminants?",
+    "answer": "Acute and chronic."
+  },
+  {
+    "question": "What legislation supports firefighters with cancer diagnoses?",
+    "answer": "Firefighters' Presumptive Rights Compensation Regulations (2019)."
+  },
+  {
+    "question": "What PPE should be worn when handling soiled PPC?",
+    "answer": "P2 mask and nitrile gloves."
+  },
+  {
+    "question": "What are signs of fatigue?",
+    "answer": "Tiredness, slow reactions, poor judgment, and lapses in attention."
+  },
+  {
+    "question": "What are early signs of heat stress?",
+    "answer": "Flushed skin, sweating, cramps, and nausea."
+  },
+  {
+    "question": "What are late signs of heat stress?",
+    "answer": "Vomiting, confusion, collapse, and convulsions."
+  },
+  {
+    "question": "What are signs of heat stroke?",
+    "answer": "High body temp, red skin, rapid pulse, and unconsciousness."
+  },
+  {
+    "question": "What is dynamic risk assessment?",
+    "answer": "Ongoing evaluation of hazards during an incident."
+  },
+  {
+    "question": "What is the noise exposure standard in Victoria?",
+    "answer": "85 dB(A) over 8 hours and 140 dB(C) peak."
+  },
+  {
+    "question": "What is the evacuation distance for a large LPG leak?",
+    "answer": "At least 800 meters in all directions."
+  },
+  {
+    "question": "What is the primary hazard of acetylene?",
+    "answer": "It is unstable and can decompose explosively under pressure."
+  },
+  {
+    "question": "What is the main hazard of medical grade oxygen?",
+    "answer": "It supports combustion and can cause spontaneous ignition with oils or grease."
+  },
+  {
+    "question": "What is a boil over?",
+    "answer": "A violent expulsion of burning liquid due to water at the bottom of a tank vaporizing."
+  },
+  {
+    "question": "What is a slop over?",
+    "answer": "Frothing of burning liquid due to water pockets in the fuel."
+  },
+  {
+    "question": "What is the typical rate of heat layer travel in a tank fire?",
+    "answer": "0.3 to 1.0 meters per hour."
+  },
+  {
+    "question": "What is a dust explosion?",
+    "answer": "An explosion caused by ignition of a fine dust cloud in air."
+  },
+  {
+    "question": "What are common dust explosion materials?",
+    "answer": "Flour, sugar, coal, sawdust, and milk powder."
+  },
+  {
+    "question": "What is the best method to suppress a metal dust fire?",
+    "answer": "Use powdered talc or dry sand, never water."
+  },
+  {
+    "question": "What is the expansion ratio of CO2?",
+    "answer": "450:1."
+  },
+  {
+    "question": "What is the purpose of the Wedge Door Kit?",
+    "answer": "To gain access to locked vehicles without breaking windows."
+  },
+  {
+    "question": "What is the pump wedge used for in the Wedge Door Kit?",
+    "answer": "To create a gap between the door and frame."
+  },
+  {
+    "question": "What is the maximum spreading force of the forcible entry tool?",
+    "answer": "5.5 tonnes."
+  },
+  {
+    "question": "What is the maximum cutting force of the forcible entry tool?",
+    "answer": "20.8 tonnes."
+  },
+  {
+    "question": "What is the battery life of the forcible entry tool?",
+    "answer": "Approximately 5 hours."
+  },
+  {
+    "question": "What is the operating pressure of the Div A Geforce branch?",
+    "answer": "500 kPa."
+  }
+];
+        let selectedQuestions = [];
+        let currentIndex = 0;
+
+        function startQuiz(count) {
+            selectedQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, count);
+            document.getElementById("start-buttons").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
+            document.getElementById("nav-buttons").style.display = "block";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = selectedQuestions[currentIndex];
+            document.getElementById("question").innerText = q.question;
+            document.getElementById("answer").innerText = q.answer;
+            document.getElementById("answer").style.display = "none";
+        }
+
+        function showAnswer() {
+            document.getElementById("answer").style.display = "block";
+        }
+
+        function nextQuestion() {
+            if (currentIndex < selectedQuestions.length - 1) {
+                currentIndex++;
+                showQuestion();
+            } else {
+                document.getElementById("quiz-container").style.display = "none";
+                document.getElementById("end-screen").style.display = "block";
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showQuestion();
+            }
+        }
+    </script>
+</body>
+</html>
